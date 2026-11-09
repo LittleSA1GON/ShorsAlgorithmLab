@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shor's Algorithm Lab</title>
+<meta name="description" content="Step-by-step animations of Shor's algorithm and live lab experiments you can run in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Schibsted+Grotesk:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Shor's Algorithm Lab</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#learn">Learn</a>
+      <a href="#lab">Lab</a>
+      <a href="#experiments">Experiments</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="wrap intro">
+    <h1>How a quantum computer would break RSA</h1>
+    <p class="lede">RSA encryption is safe because splitting a big number into its two prime factors takes classical computers far too long. Shor's algorithm would let a large quantum computer do it quickly. Watch the six steps below, then try it yourself in the lab.</p>
+    <dl class="terms">
+      <div><dt>mod N</dt><dd>the remainder after dividing by N, like hours on an N-hour clock</dd></div>
+      <div><dt>period r</dt><dd>how many steps a repeating pattern takes before it starts over</dd></div>
+      <div><dt>qubit</dt><dd>a quantum bit; many qubits can hold many values at once</dd></div>
+      <div><dt>measure</dt><dd>reading the qubits, which returns one value at random</dd></div>
+    </dl>
+  </section>
+
+  <!-- ================================================================ LEARN -->
+  <section id="learn" class="learn">
+    <div class="wrap">
+      <h2>Learn it in six steps</h2>
+      <p class="muted">Press <b>Play</b> on each animation. Use <b>Next</b> to move through it at your own pace.</p>
+    </div>
+
+    <article class="chapter wrap" id="ch-rsa" data-clip="rsa" data-steps="1-8,8-40,40-72">
+      <header class="ch-head"><span class="ch-num">1</span><h3>The lock: multiplying is easy, undoing it is hard</h3></header>
+      <div class="ch-body">
+        <div class="player"></div>
+        <ol class="steps">
+          <li><b>Two secret primes.</b> The amber spheres are two prime numbers, p and q. Only the owner of the key knows them.</li>
+          <li><b>Multiply them.</b> Their product N is published as the public key. Anyone can use N to lock (encrypt) a message, but unlocking it needs p and q.</li>
+          <li><b>Try to undo it.</b> An attacker has to guess factors of N. For a real 617-digit N, the best classical methods would take far longer than a lifetime.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="chapter wrap" id="ch-clock" data-clip="clock" data-steps="1-6,6-42,42-64">
+      <header class="ch-head"><span class="ch-num">2</span><h3>The trick: factoring hides a repeating pattern</h3></header>
+      <div class="ch-body">
+        <div class="player"></div>
+        <ol class="steps">
+          <li><b>A 15-hour clock.</b> Take N = 15. Counting "mod 15" means wrapping around after 14, like a clock with 15 hours. Pick a = 2 and start at 1.</li>
+          <li><b>Keep multiplying by 2.</b> 1 → 2 → 4 → 8. The next step gives 16, which wraps around to 1.</li>
+          <li><b>The pattern repeats every 4 steps, so r = 4.</b> From r we get the factors: 2² − 1 = 3 and 2² + 1 = 5, and 3 × 5 = 15. For big N, finding r this way takes too long. That is the step a quantum computer speeds up.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="chapter wrap" id="ch-super" data-clip="superposition" data-steps="1-10,10-38,38-72">
+      <header class="ch-head"><span class="ch-num">3</span><h3>Quantum step 1: try every power at once</h3></header>
+      <div class="ch-body">
+        <div class="player"></div>
+        <ol class="steps">
+          <li><b>Start with one value.</b> Each bar is one possible exponent x, from 0 to 15. Bar height shows its amplitude. Everything starts on x = 0.</li>
+          <li><b>Hadamard gates spread it out.</b> Now all 16 values of x are present at once, with equal amplitude.</li>
+          <li><b>Compute 2<sup>x</sup> mod 15 for all of them together.</b> Each bar gets a color for its answer: 1, 2, 4, 8, then the same four again. The colors repeat every 4 bars, so the period is now hidden inside the qubits.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="chapter wrap" id="ch-qft" data-clip="interference" data-steps="1-16,16-48,48-72">
+      <header class="ch-head"><span class="ch-num">4</span><h3>Quantum step 2: interference finds the rhythm</h3></header>
+      <div class="ch-body">
+        <div class="player"></div>
+        <ol class="steps">
+          <li><b>A comb.</b> Values that share the same color sit every 4 positions, like the teeth of a comb (now with 64 positions).</li>
+          <li><b>The inverse quantum Fourier transform.</b> It makes waves that cancel out almost everywhere and add up only at a few spots, like ripples in a pond.</li>
+          <li><b>Four tall peaks remain,</b> at 0, 16, 32 and 48: evenly spaced by 64 ÷ 4. The spacing reveals r = 4.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="chapter wrap" id="ch-measure" data-clip="measure" data-steps="1-12,12-32,32-52,52-72">
+      <header class="ch-head"><span class="ch-num">5</span><h3>Measure, then a little arithmetic</h3></header>
+      <div class="ch-body">
+        <div class="player"></div>
+        <ol class="steps">
+          <li><b>Measure.</b> Reading the qubits picks one peak at random.</li>
+          <li><b>We got y = 16.</b> Only that value is left. The rest of the state is gone.</li>
+          <li><b>Turn it into r.</b> 16 / 64 simplifies to 1 / 4, and the bottom number is the period: r = 4.</li>
+          <li><b>Get the factors.</b> gcd(2² − 1, 15) = 3 and gcd(2² + 1, 15) = 5. If we had read y = 0 or y = 32, we would simply run again.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="chapter wrap" id="ch-pqc" data-clip="lattice" data-steps="1-32,32-52,52-72">
+      <header class="ch-head"><span class="ch-num">6</span><h3>The fix: encryption without a pattern</h3></header>
+      <div class="ch-body">
+        <div class="player"></div>
+        <ol class="steps">
+          <li><b>A lattice.</b> A grid of points built from a few arrow directions. Real systems use hundreds of dimensions instead of 3.</li>
+          <li><b>Add a little noise.</b> The public key is a point (amber) slightly off a secret grid point.</li>
+          <li><b>Find the secret point (cyan).</b> There is no repeating pattern for the Fourier transform to find, and no known quantum algorithm does it quickly. NIST standardized these schemes in 2024: ML-KEM (FIPS 203) and ML-DSA (FIPS 204), with hash-based SLH-DSA (FIPS 205) as an alternative.</li>
+        </ol>
+      </div>
+    </article>
+  </section>
+
+  <!-- ================================================================ LAB -->
+  <section id="lab" class="section">
+    <div class="wrap">
+      <h2>Lab</h2>
+      <p class="muted">Three hands-on labs. Each one starts with sensible numbers, so you can press the main button right away.</p>
+
+      <div class="tabs" role="tablist" aria-label="Labs">
+        <button class="tab" role="tab" id="tab-period" aria-controls="lab-period" aria-selected="true">A · Find the period</button>
+        <button class="tab" role="tab" id="tab-circuit" aria-controls="lab-circuit" aria-selected="false" tabindex="-1">B · Run Shor's circuit</button>
+        <button class="tab" role="tab" id="tab-rsa" aria-controls="lab-rsa" aria-selected="false" tabindex="-1">C · Break an RSA key</button>
+      </div>
+
+      <!-- A -->
+      <div class="lab" id="lab-period" role="tabpanel" aria-labelledby="tab-period">
+        <div class="lab-intro">
+          <p><b>Goal:</b> find the period r the slow, classical way and turn it into factors.</p>
+          <p class="hint">Try N = 21 with a = 2, then a = 4. Try N = 35 with a = 6.</p>
+        </div>
+        <div class="lab-grid">
+          <div class="plain">
+            <div class="controls">
+              <label class="field" for="pN">Number to factor (N)<input id="pN" type="number" min="15" max="9999" value="15" inputmode="numeric"></label>
+              <label class="field" for="pA">Base (a)<input id="pA" type="number" min="2" max="9998" value="2" inputmode="numeric"></label>
+            </div>
+            <div class="result" id="pVerdict" aria-live="polite"></div>
+            <div class="seq" id="pSeq" aria-label="Powers of a mod N"></div>
+          </div>
+          <div class="panel">
+            <h4>a<sup>x</sup> mod N as x grows</h4>
+            <div class="chart" id="pChart"></div>
+            <p class="caption">Cyan dots are where the sequence returns to 1. The gap between them is the period r.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- B -->
+      <div class="lab" id="lab-circuit" role="tabpanel" aria-labelledby="tab-circuit" hidden>
+        <div class="lab-intro">
+          <p><b>Goal:</b> run the quantum circuit, measure it, and see how often one run reveals the factors.</p>
+          <p class="hint">Press <b>Measure 100 times</b>. Then lower the counting qubits for N = 21 and watch the peaks blur.</p>
+        </div>
+        <div class="controls">
+          <label class="field" for="cN">Number to factor (N)<select id="cN"></select></label>
+          <label class="field" for="cA">Base (a)<select id="cA"></select></label>
+          <label class="field" for="cT">Counting qubits: <span id="cTv" class="num">8</span><input id="cT" type="range" min="3" max="12" value="8"></label>
+          <label class="field" for="cE">Hardware noise: <span id="cEv" class="num">none</span><input id="cE" type="range" min="0" max="60" value="0"></label>
+        </div>
+        <div class="chart circuit" id="cCircuit" aria-label="Circuit diagram"></div>
+        <div class="lab-grid">
+          <div class="plain">
+            <div class="btnrow">
+              <button class="btn primary" id="cShot" type="button">Measure once</button>
+              <button class="btn" id="cShots" type="button">Measure 100 times</button>
+              <button class="btn ghost" id="cClear" type="button">Reset</button>
+            </div>
+            <div class="stats">
+              <div class="stat"><span class="k">Runs</span><span class="v num" id="cRuns">0</span></div>
+              <div class="stat"><span class="k">Found factors</span><span class="v num" id="cHits">0</span></div>
+              <div class="stat"><span class="k">Your success rate</span><span class="v num" id="cRate">–</span></div>
+              <div class="stat"><span class="k">Expected</span><span class="v num" id="cExp">–</span></div>
+            </div>
+            <div class="log" id="cLog" aria-live="polite">Each run prints the measured y, the fraction it simplifies to, and whether that revealed the factors.</div>
+          </div>
+          <div class="panel">
+            <h4>What the qubits will read out</h4>
+            <div class="legend"><span><i class="sw q"></i>chance of each result</span><span><i class="sw a"></i>your measurements</span></div>
+            <div class="chart" id="cHist"></div>
+            <p class="caption" id="cNote"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- C -->
+      <div class="lab" id="lab-rsa" role="tabpanel" aria-labelledby="tab-rsa" hidden>
+        <div class="lab-intro">
+          <p><b>Goal:</b> lock a message with a tiny RSA key, then break the key with Shor's algorithm.</p>
+          <p class="hint">Press <b>Attack</b>. The attacker only sees the public numbers N and e.</p>
+        </div>
+        <div class="lab-grid">
+          <div class="plain">
+            <div class="controls">
+              <label class="field" for="rP">Secret prime p<select id="rP"></select></label>
+              <label class="field" for="rQ">Secret prime q<select id="rQ"></select></label>
+            </div>
+            <label class="field" for="rMsg">Message (letters and spaces)<input id="rMsg" type="text" value="SHOR WAS HERE" maxlength="40" autocomplete="off"></label>
+            <div class="keybox" id="rKey"></div>
+            <div class="btnrow"><button class="btn primary" id="rAttack" type="button">Attack</button></div>
+          </div>
+          <div class="panel">
+            <h4>Attacker's log</h4>
+            <div class="log tall" id="rLog" aria-live="polite">Waiting for the attack.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================================================ EXPERIMENTS -->
+  <section id="experiments" class="section">
+    <div class="wrap">
+      <h2>Experiments</h2>
+      <p class="muted">Five questions, answered live. Each experiment runs the simulated circuit hundreds of times in your browser and reports what it found. A run only counts as a success if it actually reveals the factors.</p>
+      <div class="btnrow"><button class="btn primary" id="runAll" type="button">Run all five</button></div>
+
+      <div class="exps" id="exps"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Ethan Vu · PHYS 161 · Animations rendered in Blender. Python version of every lab in <code>lab/</code>.</p>
+    <p class="refs">Sources: Shor, <i>SIAM J. Comput.</i> 26 (1997) · IBM Quantum, "Shor's algorithm" (Learning &amp; Docs) · Gidney, arXiv:2505.15917 (2025) · Skosana &amp; Tame, <i>Sci. Rep.</i> (2021) · arXiv:2512.15330 (2025) · NIST FIPS 203–205 (2024)</p>
+  </div>
+</footer>
+
+<script src="assets/shor-core.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

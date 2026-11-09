@@ -1,0 +1,5 @@
+numpy
+matplotlib
+# optional, for qiskit_hardware.py
+# qiskit
+# qiskit-ibm-runtime
